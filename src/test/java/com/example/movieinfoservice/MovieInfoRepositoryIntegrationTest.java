@@ -74,4 +74,28 @@ public class MovieInfoRepositoryIntegrationTest {
                 })
                 .verifyComplete();
     }
+
+    @Test
+    void updateMovie(){
+        var movieInfo = movieInfoRepository.findById("abc").block();
+        movieInfo.setYear(2022);
+        var movieSAveMono = movieInfoRepository.save(movieInfo).log();
+
+        StepVerifier.create(movieSAveMono)
+                .assertNext(movie -> {
+                    assertNotNull(movie.getMovieInfoId());
+                    assertEquals(2022, movie.getYear());
+                })
+                .verifyComplete();
+    }
+
+    @Test
+    void deleteMovie(){
+        movieInfoRepository.deleteById("abc").block();
+        var allMovie = movieInfoRepository.findAll().log();
+
+        StepVerifier.create(allMovie)
+                .expectNextCount(2)
+                .verifyComplete();
+    }
 }
